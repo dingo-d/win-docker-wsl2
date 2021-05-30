@@ -33,11 +33,13 @@ services:
       WORDPRESS_DB_PASSWORD: ${DB_PASSWORD}
       WORDPRESS_DB_NAME: ${FIRST_PROJECT_DB}
       WP_CLI_ALLOW_ROOT: "true"
-    command: > # WP-CLI setup.
+    command: > # WP-CLI setup, Xdebug setup and mhsendmail setup (used for Mailhog).
       bash -c "curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar;
       chmod +x wp-cli.phar;
       mv wp-cli.phar /usr/local/bin/wp;
       pecl install xdebug;
+      curl -LkSso /usr/bin/mhsendmail 'https://github.com/mailhog/mhsendmail/releases/download/v0.2.0/mhsendmail_linux_amd64';
+      chmod 0755 /usr/bin/mhsendmail;
       sh /usr/local/bin/docker-entrypoint.sh;
       apache2-foreground;"
 
@@ -64,6 +66,8 @@ services:
       chmod +x wp-cli.phar;
       mv wp-cli.phar /usr/local/bin/wp;
       pecl install xdebug;
+      curl -LkSso /usr/bin/mhsendmail 'https://github.com/mailhog/mhsendmail/releases/download/v0.2.0/mhsendmail_linux_amd64';
+      chmod 0755 /usr/bin/mhsendmail;
       sh /usr/local/bin/docker-entrypoint.sh;
       apache2-foreground;"
 
