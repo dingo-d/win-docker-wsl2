@@ -4,7 +4,7 @@ services:
   db:
     image: mysql:5.7
     volumes:
-      - ./config:/docker-entrypoint-initdb.d
+      - ./config:/docker-entrypoint-initdb.d # We need to manually define multiple databases in one container.
     restart: always
     ports:
       - "${DB_HOST_PORT}:${DB_PORT}"
@@ -19,7 +19,7 @@ services:
       - db
     image: wordpress:latest
     extra_hosts:
-      - "host.docker.internal:host-gateway"
+      - "host.docker.internal:host-gateway" # So that Xdebug can connect with our IDE.
     ports:
       - "${FIRST_PROJECT_PORT_PRIMARY}:80"
       - "${FIRST_PROJECT_PORT_SECONDARY}:80"
@@ -33,7 +33,7 @@ services:
       WORDPRESS_DB_PASSWORD: ${DB_PASSWORD}
       WORDPRESS_DB_NAME: ${FIRST_PROJECT_DB}
       WP_CLI_ALLOW_ROOT: "true"
-    command: >
+    command: > # WP-CLI setup.
       bash -c "curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar;
       chmod +x wp-cli.phar;
       mv wp-cli.phar /usr/local/bin/wp;
@@ -69,10 +69,12 @@ services:
 
   mailhog:
     image: mailhog/mailhog
-    container_name: docker-mailhog
+    logging:
+      driver: 'none' # Don't save logs.
     ports:
       - "${MAILHOG_HOST_PORT_SMTP}:1025"
       - "${MAILHOG_HOST_PORT_WEB}:8025"
+    restart: always
 
 volumes:
   db:
